@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo in nodejs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center">Todo In Nodejs </h1>
+        <div class="row d-flex justify-content-center">
+            <div class="col">
+                <input type="text" name="text" id="text" placeholder="Enter your text..." />
+                <button class="btn btn-primary" id="btn">Submit</button>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-start" id="temp_body">
+
+        </div>
+    </div>
+    <script>
+        let text = document.getElementById('text')
+        let btn = document.getElementById('btn')
+        let temp_body = document.getElementById('temp_body')
+        let globalArr =[]
+        let edit = ''
+        function deleteHandler(id) {
+            fetch('/', { method: "DELETE", body: JSON.stringify(id) }).then((item) => {
+                return item.json()
+            }).then((item) => {
+                globalArr = item
+                print()
+              
+            })
+        }
+        function editHandler(id) {
+            let findData = globalArr.find((item) => {
+                return item.id == id
+            })
+            edit = findData;
+            text.value = findData.text
+        }
+
+
+        function print() {
+            text.value=''
+            let template = ''
+            if (globalArr.length > 0) {
+                globalArr.map((item) => {
+                    let { text, id } = item
+                    template += `<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <p class="card-text">${text}</p>
+    <a onclick="deleteHandler(${id})"  class="btn btn-danger">Delete</a>
+    <a onclick="editHandler(${id})"   class="btn btn-primary">Edit</a>
+  </div>
+</div>`
+
+                    temp_body.innerHTML = template
+                })
+            }
+            else {
+                temp_body.innerHTML = `<h1>No Data Found....</h1>`
+            }
+        }
+        btn.addEventListener('click', () => {
+            if (!text.value) {
+                alert("Please Enter some text ")
+                return
+            }
+            else {
+                // this is for the edit
+                if (edit) {
+                    let obj={id:edit.id,text:text.value}
+
+                    fetch('/', { method: "PUT", body: JSON.stringify(obj) }).then((item) => {
+                        return item.json()
+                    }).then((data) => {
+                        globalArr = data
+                        print()
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                    edit=''
+                    text.value=''
+                }
+                // this is for the addition
+                else {
+                    fetch('/', { method: "POST", body: JSON.stringify(text.value) }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+                        globalArr = data
+                        print()
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                }
+            }
+        })
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
