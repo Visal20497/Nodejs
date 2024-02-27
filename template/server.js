@@ -1,15 +1,14 @@
 let http = require("http");
 let fs = require("fs");
 let path = require("path");
+let hostName = "127.0.0.1"
 let PORT = 8080;
 let server = http
   .createServer((req, res) => {
     console.log(req.url);
     if (req.url == "/") {
       fs.readFile(
-        path.join(__dirname, "public/pages/Home.html"),
-        "utf-8",
-        (err, data) => {
+        path.join(__dirname, "public/pages/Home.html"), "utf-8", (err, data) => {
           if (err) {
             res.writeHead(500, { "Content-Type": "text/plain" });
             res.write("somthing wrong while priting");
@@ -27,7 +26,24 @@ let server = http
     }
     if (req.url == "/about") {
       fs.readFile(
-        path.join(__dirname, "public/pages/About.html"),
+        path.join(__dirname, "public/pages/About.html"), "utf-8",
+        (err, data) => {
+          if (err) {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.write("somthing wrong while priting");
+            res.end();
+          } else {
+            // res.writeHead(200, { "Content-Type": "text/html" });
+            // res.write(data)
+            // res.end()
+            res.end(data);
+          }
+        }
+      );
+    }
+    if (req.url == '/home.css') {
+      fs.readFile(
+        path.join(__dirname, "public/css/home.css"),
         "utf-8",
         (err, data) => {
           if (err) {
@@ -35,71 +51,51 @@ let server = http
             res.write("somthing wrong while priting");
             res.end();
           } else {
-            res.writeHead(200, { "Content-Type": "text/html" });
+            res.writeHead(200, { "Content-Type": "text/css" });
             // res.write(data)
             // res.end()
             res.end(data);
           }
         }
       );
-    } 
-    if(req.url=='/home.css')
-    {
-        fs.readFile(
-            path.join(__dirname, "public/css/home.css"),
-            "utf-8",
-            (err, data) => {
-              if (err) {
-                res.writeHead(500, { "Content-Type": "text/plain" });
-                res.write("somthing wrong while priting");
-                res.end();
-              } else {
-                res.writeHead(200, { "Content-Type": "text/css" });
-                // res.write(data)
-                // res.end()
-                res.end(data);
-              }
-            }
-          );   
     }
-    if(req.url=='/asset/img.jpg')
-    {
-        fs.readFile(
-            path.join(__dirname, "public/asset/img.jpg"),
-            (err, data) => {
-              if (err) {
-                res.writeHead(500, { "Content-Type": "text/plain" });
-                res.write("somthing wrong while priting");
-                res.end();
-              } else {
-                res.writeHead(200, { "Content-Type": "image/jpeg" });
-                // res.write(data)
-                // res.end()
-                res.end(data);
-              }
-            }
-          );   
+    if (req.url == '/asset/img.jpg') {
+      fs.readFile(
+        path.join(__dirname, "public/asset/img.jpg"),
+        (err, data) => {
+          if (err) {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.write("somthing wrong while priting");
+            res.end();
+          } else {
+            res.writeHead(200, { "Content-Type": "image/jpeg" });
+            // res.write(data)
+            // res.end()
+            res.end(data);
+          }
+        }
+      );
     }
-    
+
     else {
-        fs.readFile(
-            path.join(__dirname, "public/pages/404.html"),
-            "utf-8",
-            (err, data) => {
-              if (err) {
-                res.writeHead(500, { "Content-Type": "text/plain" });
-                res.write("somthing wrong while priting");
-                res.end();
-              } else {
-                res.writeHead(200, { "Content-Type": "text/html" });
-                // res.write(data)
-                // res.end()
-                res.end(data);
-              }
-            }
-          );
+      fs.readFile(
+        path.join(__dirname, "public/pages/404.html"),
+        "utf-8",
+        (err, data) => {
+          if (err) {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.write("somthing wrong while priting");
+            res.end();
+          } else {
+            // res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(data);
+          }
+        }
+      );
     }
   })
-  .listen(8080, () => {
-    console.log("connection successful");
-  });
+
+
+server.listen(8080, hostName, () => {
+  console.log(`server listen at http://${hostName}:${PORT}`);
+});
